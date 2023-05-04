@@ -1,0 +1,652 @@
+
+/* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
+*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
+    all: unset;
+    display: revert;
+  }
+ 
+  /* Preferred box-sizing value */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  /*
+    Remove list styles (bullets/numbers)
+    in case you use it with normalize.css
+  */
+  ol, ul {
+    list-style: none;
+  }
+  
+  /* For images to not be able to exceed their container */
+  img {
+    display: block;
+    max-width: 100%;
+  }
+  
+  /* Removes spacing between cells in tables */
+  table {
+    border-collapse: collapse;
+  }
+  
+  /* Revert the 'white-space' property for textarea elements on Safari */
+  textarea {
+    white-space: revert;
+  }
+  
+  :root {
+    --clr-primary:rgb(102, 52, 127);
+    --clr-secondary:rgb(158, 71, 132);
+    --clr-dark:rgb(55, 48, 107);
+    --clr-accent:rgb(210, 118, 133);
+
+    --clr-low-light: rgb(0, 255, 0, .2);
+    --clr-medium-light: rgb(0, 0, 255, .2);
+    --clr-high-light: rgb(255, 255, 0, .2);
+    --clr-critical-light: rgb(255, 0, 0, .2);
+
+    --clr-low-strong: rgb(0, 255, 0);
+    --clr-medium-strong: rgb(0, 0, 255);
+    --clr-high-strong: gold;
+    --clr-critical-strong: rgb(255, 0, 0);
+
+
+
+
+    --fs-average: 1rem;
+    --fs-medium: calc(var(--fs-average) * 1.25);
+    --fs-big: calc(var(--fs-average) * 1.5rem);
+    --fs-large:calc(var(--fs-average) * 2rem); 
+    
+  }
+
+  .low {
+    background-color: var(--clr-low-light);
+  }
+
+  .medium {
+    background-color: var(--clr-medium-light);
+  }
+
+  .high {
+    background-color: var(--clr-high-light);
+  }
+
+  .critical{
+    background-color: var(--clr-critical-light);
+  }
+
+  .critical span {
+    color: var(--clr-critical-strong);    
+  }
+
+  .high span {
+    color: var(--clr-high-strong);    
+  }
+
+  .medium span {
+    color: var(--clr-medium-strong);    
+  }
+
+  .low span {
+    color: var(--clr-low-strong);    
+  } 
+
+
+  .critical .description p  {
+      border-bottom:3px solid var(--clr-critical-light);  
+      border-inline:3px solid var(--clr-critical-light);
+  }
+
+  
+  .high .description p {
+    border-bottom:3px solid var(--clr-high-light);  
+    border-inline:3px solid var(--clr-high-light);
+  }
+
+  .medium .description p {
+    border-bottom:3px solid var(--clr-medium-light);  
+    border-inline:3px solid var(--clr-medium-light);
+  }
+
+  .low .description p {
+    border-bottom:3px solid var(--clr-low-light);  
+    border-inline:3px solid var(--clr-low-light);
+  }
+
+
+
+
+  * {
+    font-family: 'Fira Sans', sans-serif;
+  }
+
+main {
+    width: 100%;    
+}
+
+.container  {
+    margin-inline: auto; 
+    width: min(80%, 50rem);
+}
+
+.list {
+    
+    margin-inline: auto;      
+}
+
+.list-top {
+    background-color: var(--clr-dark);
+    color: white;
+    margin-block: auto;
+    
+}
+
+.list-top, .list-middle {
+    padding-inline:3%;
+}
+
+.list-middle {
+    padding-block: 1rem;
+}
+
+.list-top {
+    padding-top: 1rem;
+}
+
+.nav {
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+}
+
+.nav ul{
+    display: flex;
+    gap: 1rem;
+    text-transform: capitalize;    
+}
+
+
+
+.nav ul li:hover {
+  cursor: pointer;
+  border-bottom: 2px solid white;
+  /* text-decoration: underline; */
+}
+
+.buttons {
+    font-size: var(--fs-medium);
+    display: flex;
+    justify-content: space-between;
+    gap:1rem;
+}
+
+.buttons button {
+    background-color: var(--clr-accent);
+    padding: .5rem 10%;
+    text-transform: uppercase;
+}
+
+
+.buttons button:hover {
+    transition: all .5s ease;
+    cursor: pointer;
+    background-color: var(--clr-secondary);
+    color: var(--clr-dark);
+}
+
+
+.task {  
+  margin-block: 1rem; 
+  position: relative;
+}
+
+.task form {
+  padding: .5rem;
+}
+
+.task form > *{
+  margin: 3%;
+}
+
+.task option, .task select, .task form {
+  text-transform: uppercase;
+  color: black;
+  width: min-content;  
+  text-align: center;  
+}
+
+.task select {
+  font-weight: 900;
+  font-style: italic;  
+}
+
+.task option {
+  font-style: normal;
+  font-weight: normal;
+}
+
+
+.task input[type=submit] {  
+  padding: 0;
+  border-radius: 0;
+}
+
+.edit-buttons input {
+  margin-right: 5%;
+}
+
+.edit-buttons button {
+  margin-inline: auto;
+}
+
+.task input[type=submit], .task button {
+  color: black;
+  background-color: lightgrey;  
+  padding: 2%;
+  border-radius: 1rem;
+  transition: all .5s ease;
+}
+
+.task input[type=submit]:hover {
+  color: white;
+  background-color: green;
+}
+
+.task button:hover {
+  color: white;
+  cursor: pointer;
+  background-color: red;
+}
+
+.task form {
+  border: 1px solid black;
+  background-color: lightgrey; 
+}
+.task form input, .task form  select, .task button {
+  opacity: .7;
+}
+
+.task form input:not(input[type=submit]), .task form  select{
+  border-bottom: 1px solid black;
+}
+
+.task form > *:not(:nth-child(3)):hover {  
+  opacity: 1;
+}
+
+.task form input[type=text] {
+  text-transform: none;
+  opacity: 1;
+  font-style: normal;
+}
+
+.task-main  {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;    
+    font-size:var(--fs-medium);   
+    padding: .5rem;
+    padding-bottom: 1rem;   
+}
+
+.task-main p{
+    display: inline;
+}
+
+.task-main > div {    
+    display: flex;    
+    align-content: center;
+}
+
+.list-middle {
+    background-color: whitesmoke;
+}
+
+.task-main svg:first-child {
+    margin-right: .5rem;
+}
+
+
+
+svg {
+    opacity: .5;
+    transition: color .5s ease;
+}
+
+svg:hover {
+    cursor: pointer;
+    opacity: 1;    
+    transition: color .5s ease;
+}
+
+.tick:hover {
+    fill: red;
+}
+
+
+.info {    
+    font-size: var(--fs-average);  
+}
+
+.info span {
+    text-transform: uppercase;
+    margin-right: .3rem;
+    
+}
+
+.current-slide {
+    border-bottom: 2px solid white;
+}
+
+.description {    
+    font-size: var(--fs-average);      
+    font-style: italic;
+    display: none;   
+}
+
+.description p{
+  padding: 1rem; 
+  background-color: white;
+  width: 100%;
+}
+
+.description svg {
+  position: absolute;
+  right: 1%;
+  top: 20%;
+}
+
+.new-task-form, .background-color, .new-project-form {  
+  position: absolute;  
+}
+
+.background-color {
+  
+  background-color: black;
+  width: 100vw;
+  height: calc(100% + 30vh);
+  opacity: .7;
+}
+
+
+.new-task-form, .background-color, .main-absolute, .new-project-form {
+  visibility: hidden;
+}
+
+.nav select:hover {
+  color: white;
+}
+
+.new-task-form, .new-project-form, .background-color {
+  z-index: 10000;
+  
+}
+
+.main-absolute {  
+  display: grid;  
+  justify-items: center;
+  
+
+}
+
+
+form {   
+  color: white;
+  display: grid;
+  position: relative;
+}
+
+fieldset {  
+  background-color: var(--clr-secondary);
+  padding: 1rem;
+  border-radius: 20px;
+  margin:1rem;
+  text-align:center;
+}
+
+legend{
+  background-color: var(--clr-accent);
+  border-radius: 10px;
+  padding:.5rem 1rem;
+}
+
+input[type=text], textarea {
+  border-bottom: 1px solid black;
+}
+
+input[type=submit]:hover, select:hover,input[type=date]:hover,.close-button:hover {
+  color: black;  
+  cursor: pointer;
+  transition: all .5s ease;
+}
+
+
+input[type=submit],.close-button {
+  background-color:var(--clr-secondary);
+  margin-inline: auto;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  transition: background-color .5s ease;
+}
+
+input[type=submit]:hover,.close-button:hover {
+  background-color:var(--clr-dark);  
+  transition: background-color .5s ease;
+}
+
+option {
+  color: black; 
+}
+
+.task-project {
+  font-style: italic;
+  font-size: var(--fs-average);
+  position: absolute;
+  bottom:0;
+  left: 2.5rem;
+  
+  opacity: .7;
+  bottom: 15%;
+}
+
+legend {
+  position: relative;
+}
+.optional::after {
+  content: "(optional field)"; 
+  display: block;
+  font-size: .8em;
+  font-style: italic;
+}
+
+.svg-div {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;  
+}
+
+.project {
+  margin-block:1rem;
+  border-bottom:3px solid var(--clr-accent);  
+  border-inline:3px solid var(--clr-accent);
+}
+
+
+.project-top {
+  display: flex;
+  justify-content: space-between; 
+  padding: 1rem; 
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: bold;
+  background-color: var(--clr-accent);
+}
+
+
+
+.project-hidden {
+  display: none;
+  background-color: white;
+  padding-inline: 1rem;
+}
+
+.project-hidden  .task-project {
+  visibility: hidden !important;
+}
+
+
+.btn-description-redo, .btn-description-clear {
+  position: absolute;
+  border-bottom: none !important;  
+}
+
+.btn-description-redo {
+  left: 75%;  
+  
+}
+.description-form textarea{
+  border-bottom: none;
+}
+
+.description-form textarea {
+  width: 14.5rem;
+  padding-right:4rem; 
+  word-wrap:break-word ;
+  text-wrap:unrestricted; 
+}
+
+.title-form input, .description-form textarea, .title-form select  {
+    text-align: left; 
+    text-transform: none;
+    font-style: normal;   
+}
+
+.title-form select {
+  font-size: 1rem; 
+  width: 90%;
+  margin-inline: auto;
+}
+
+.title-form option {
+  text-transform: capitalize;
+}
+
+
+
+@media (max-width: 31.25rem) {
+  :root {
+    --fs-average: 1rem;
+  } 
+  .task-main  {    
+    flex-direction: column;  
+    gap: 2rem;    
+  }   
+
+  
+  
+  
+  .task-project {     
+    top: 30%;
+    left: 2.5rem;    
+  }
+
+  .svg-div {
+    position: absolute;
+    right: 1rem;
+    top: 20%;
+  }
+
+  .info {
+    margin-left:33px;
+  }
+  
+}
+
+.remove-project-warning {
+  color: white;
+  background-color: grey;
+  text-align: center;
+  text-transform: none;
+  padding: 2rem;
+}
+
+.remove-project-warning > * {
+  margin-bottom: 1rem;
+}
+.remove-project-warning h1{
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.remove-project-warning form div, .remove-project-warning form button {
+  width: min-content;
+  white-space: nowrap;
+}
+
+.remove-project-warning form {
+    display: grid;       
+   
+    column-gap: 1rem;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+    "justProject tasks"
+    "submit cancel"
+    ;
+    padding: 5%;
+}
+
+.just-project-div {
+  grid-area: justProject;
+  justify-self: center;
+  
+}
+
+.tasks-div {
+  grid-area: tasks;
+  justify-self: center;
+  
+}
+
+.btn-warning-submit {
+  grid-area: submit;  
+  margin-inline: 0 !important;
+  justify-self: flex-end !important;
+  
+}
+
+.btn-warning-cancel{
+  justify-self: flex-start;
+  grid-area: cancel;  
+  
+}
+
+
+
+.remove-project-warning input[type=radio]{
+  background-color: red;
+  appearance: auto;
+}
+
+.btn-warning-cancel , .btn-warning-submit{
+  padding: 1rem 2rem !important;
+  background-color: grey !important;
+  border-radius:  50px !important;
+  
+}
+
+.btn-warning-cancel:hover , .btn-warning-submit:hover{
+  cursor: pointer;
+  color: black;
+  transition: all .5s ease;
+}
+
+.btn-warning-submit:hover {
+  background-color: green !important;   
+}
+
+.btn-warning-cancel:hover {
+  background-color: red !important;   
+}
