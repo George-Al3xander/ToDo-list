@@ -25,9 +25,10 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Webpack App",
+            title: "ToDo List",
             filename: "index.html",
             template: "src/template.html",
+            favicon: "src/favicon.svg"
         }),
         new BundleAnalyzerPlugin(),          
     ],
