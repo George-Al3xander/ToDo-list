@@ -28,20 +28,40 @@ function acceptChanges(num) {
   var formData = new FormData(form);
   var priority = formData.get("priority");
   var date = formData.get("date");
+  var descriptionForm = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)("descriptionForm".concat(num));
+  var titleForm = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)("titleForm".concat(num));
+  var formDataTitle = new FormData(titleForm);
+  var formDataDescription = new FormData(descriptionForm);
+  var title = formDataTitle.get("title");
+  var project = formDataTitle.get("project");
+  var description = formDataDescription.get("description");
+  console.log("Title: ".concat(title));
+  console.log("Desc: ".concat(description));
+  console.log("Prior: ".concat(priority));
+  console.log("Date: ".concat(date));
+  console.log("project: ".concat(project));
+  taskStorage[1] = description;
 
-  //No changes 
-  if (priority != null && date != "") {
-    (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(name, [taskStorage[0], taskStorage[1], date, priority, taskStorage[4], taskStorage[5]]);
+  //Date changed
+  if (title !== "") {
+    taskStorage[0] = title;
   }
-  //Priority not changed
-  else if (priority === null) {
-    (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(name, [taskStorage[0], taskStorage[1], date, taskStorage[3], taskStorage[4], taskStorage[5]]);
+  if (date !== "") {
+    taskStorage[2] = date;
   }
-  //Date not changed
-  else if (date == "") {
-    (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(name, [taskStorage[0], taskStorage[1], taskStorage[2], priority, taskStorage[4], taskStorage[5]]);
+  if (project !== null || project != "") {
+    taskStorage[4] = project;
+  }
+
+  //Priority changed
+  if (priority != null) {
+    taskStorage[3] = priority;
     taskDiv.className = "task ".concat(priority);
   }
+  (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(name, taskStorage);
+  var svgDots = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)("svgDots".concat(num));
+  svgDots.setAttribute("onclick", "showDescription(".concat(num, ")"));
+  svgDots.style.cursor = "pointer";
   (0,_change_js__WEBPACK_IMPORTED_MODULE_1__.cancel)(num);
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (acceptChanges);
@@ -57,18 +77,58 @@ function acceptChanges(num) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "cancel": () => (/* binding */ cancel),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "clearDescription": () => (/* binding */ clearDescription),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "redoDescription": () => (/* binding */ redoDescription)
 /* harmony export */ });
 /* harmony import */ var _getters_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getters.js */ "./src/getters.js");
 /* harmony import */ var _create_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./create.js */ "./src/create.js");
+/* harmony import */ var _dom_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./dom.js */ "./src/dom.js");
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 function editTask(num) {
+  var isShownObj = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getFromStorage)("task".concat(num));
+  var oldDescValue = isShownObj[1];
+  var isShown = isShownObj[5];
+  var taskName = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("taskName".concat(num));
+  var taskNameP = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("taskName".concat(num, " p"));
+  taskNameP.remove();
+  isShown = true;
+  (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)("task".concat(num), [isShownObj[0], isShownObj[1], isShownObj[2], isShownObj[3], isShownObj[4], isShown]);
   var info = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("info".concat(num));
   info.innerHTML = "";
-  var form = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createPriorityForm)();
+  var svgDots = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, false);
+  svgDots.setAttribute("onclick", "");
+  svgDots.style.cursor = "not-allowed";
+  var newDescription = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDescriptionForm)(oldDescValue, num);
+  newDescription.setAttribute("class", "description-form");
+  var descErase = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("M280 936q-33 0-56.5-23.5T200 856V336h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680 936H280Zm400-600H280v520h400V336ZM360 776h80V416h-80v360Zm160 0h80V416h-80v360ZM280 336v520-520Z");
+  descErase.setAttribute("onclick", "clearDescription(".concat(num, ")"));
+  var descRedo = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("M280 856v-80h284q63 0 109.5-40T720 636q0-60-46.5-100T564 496H312l104 104-56 56-200-200 200-200 56 56-104 104h252q97 0 166.5 63T800 636q0 94-69.5 157T564 856H280Z");
+  descErase.setAttribute("onclick", "clearDescription(".concat(num, ")"));
+  descErase.setAttribute("class", "btn-description-clear");
+  descRedo.setAttribute("onclick", "redoDescription(".concat(num, ")"));
+  descRedo.setAttribute("class", "btn-description-redo");
+  newDescription.appendChild(descErase);
+  newDescription.appendChild(descRedo);
+  newDescription.style.marginLeft = "40px";
+  var newTitle = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createTitleForm)(num);
+  newTitle.setAttribute("class", "title-form");
+  var projectSelect = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("select", "");
+  projectSelect.setAttribute("name", "project");
+  var defaultSelect = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("option", "None");
+  defaultSelect.setAttribute("value", "");
+  projectSelect.appendChild(defaultSelect);
+  (0,_dom_js__WEBPACK_IMPORTED_MODULE_2__.setProjectsOption)(projectSelect);
+  newTitle.appendChild(projectSelect);
+  taskName.appendChild(newTitle);
+  var form = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createPriorityForm)(num);
   form.setAttribute("id", "form-changes".concat(num));
-  var date = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDateForm)();
+  var date = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDateForm)(num);
   var acceptBtn = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("input", "");
   acceptBtn.setAttribute("type", "submit");
   acceptBtn.setAttribute("onclick", "acceptChanges(".concat(num, ")"));
@@ -83,6 +143,39 @@ function editTask(num) {
   form.appendChild(buttonDiv);
   info.appendChild(form);
   info.style.backgroundColor = "lightgrey";
+  var descriptionDiv;
+  if (isShownObj[1] != "") {
+    descriptionDiv = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("description".concat(num));
+    descriptionDiv.innerHTML = "";
+    descriptionDiv.appendChild(newDescription);
+  } else if (isShownObj[1] == "") {
+    descriptionDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
+    var taskDom = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)("task".concat(num));
+    descriptionDiv.className = "description description".concat(num);
+    descriptionDiv.appendChild(newDescription);
+    taskDom.appendChild(descriptionDiv);
+  }
+  descriptionDiv.style.display = "flex";
+  if (isShownObj[4] != null && isShownObj[4] != "") {
+    var taskProject = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("task-project".concat(num));
+    taskProject.remove();
+    var options = document.querySelectorAll("#titleForm".concat(num, "  select option"));
+    var projectSelected = taskProject.innerHTML.replaceAll("<p>", "").replaceAll("</p>", "").replaceAll(" project", "");
+    var _iterator = _createForOfIteratorHelper(options),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var option = _step.value;
+        if (projectSelected == option.innerHTML) {
+          option.setAttribute("selected", true);
+        }
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+  }
 }
 function cancel(num) {
   var oldInfo = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("info".concat(num));
@@ -99,6 +192,40 @@ function cancel(num) {
   oldInfo.appendChild(priorText);
   oldInfo.appendChild(br);
   oldInfo.appendChild(dateSpan);
+  var topDiv = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("taskName".concat(num));
+  var taskName = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("p", storageTask[0]);
+  topDiv.appendChild(taskName);
+  if (storageTask[4] !== null && storageTask[4] != "") {
+    var projectDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
+    projectDiv.className = "task-project task-project".concat(num);
+    var projectP = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("p", "".concat(storageTask[4], " project"));
+    projectDiv.appendChild(projectP);
+    topDiv.appendChild(projectDiv);
+  }
+  var formTitle = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)("titleForm".concat(num));
+  formTitle.remove();
+  var svgIcon = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, false);
+  if (storageTask[1] != "") {
+    var taskDesc = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("description".concat(num));
+    var oldDesc = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("p", storageTask[1]);
+    taskDesc.innerHTML = "";
+    taskDesc.appendChild(oldDesc);
+    svgIcon.setAttribute("onclick", "showDescription(".concat(num, ")"));
+    taskDesc.style.display = "none";
+  } else if (storageTask[1] == "") {
+    var _taskDesc = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getByClass)("description".concat(num));
+    svgIcon.setAttribute("onclick", "message()");
+    _taskDesc.remove();
+  }
+}
+function clearDescription(num) {
+  var inputValue = document.querySelector("#descriptionForm".concat(num, " textarea"));
+  inputValue.innerHTML = "";
+}
+function redoDescription(num) {
+  var inputValue = document.querySelector("#descriptionForm".concat(num, " textarea"));
+  var storageItem = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getFromStorage)("task".concat(num));
+  inputValue.innerHTML = storageItem[1];
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (editTask);
 
@@ -145,14 +272,20 @@ function reduceCount() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "changeSvgIcon": () => (/* binding */ changeSvgIcon),
 /* harmony export */   "createDateForm": () => (/* binding */ createDateForm),
+/* harmony export */   "createDescriptionForm": () => (/* binding */ createDescriptionForm),
 /* harmony export */   "createDiv": () => (/* binding */ createDiv),
 /* harmony export */   "createEl": () => (/* binding */ createEl),
 /* harmony export */   "createOption": () => (/* binding */ createOption),
 /* harmony export */   "createPriorityForm": () => (/* binding */ createPriorityForm),
-/* harmony export */   "createSvg": () => (/* binding */ createSvg)
+/* harmony export */   "createRemoveProjectForm": () => (/* binding */ createRemoveProjectForm),
+/* harmony export */   "createSvg": () => (/* binding */ createSvg),
+/* harmony export */   "createTitleForm": () => (/* binding */ createTitleForm)
 /* harmony export */ });
 /* harmony import */ var _date_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./date.js */ "./src/date.js");
+/* harmony import */ var _getters_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getters.js */ "./src/getters.js");
+
 
 function createEl(type, text) {
   var obj = document.createElement(type);
@@ -180,7 +313,7 @@ function createOption(value) {
   obj.setAttribute("value", value);
   return obj;
 }
-function createPriorityForm() {
+function createPriorityForm(num) {
   var form = createEl("form", "");
   var select = createEl("select", "");
   form.addEventListener("submit", function (e) {
@@ -188,30 +321,124 @@ function createPriorityForm() {
   });
   select.setAttribute("name", "priority");
   var test = createOption("Select priority");
-  test.setAttribute("selected", "true");
-  test.setAttribute("disabled", "");
-  var low = createOption("low");
-  low.className = "low";
-  var medium = createOption("medium");
-  medium.className = "medium";
-  var high = createOption("high");
-  high.className = "high";
-  var critical = createOption("critical");
-  critical.className = "critical";
-  form.appendChild(select);
   select.appendChild(test);
-  select.appendChild(low);
-  select.appendChild(medium);
-  select.appendChild(high);
-  select.appendChild(critical);
+  test.setAttribute("disabled", "");
+  //test.setAttribute("selected","true");
+
+  var storageTask = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getFromStorage)("task".concat(num));
+  var storagePriority = storageTask[3];
+  var priorities = ["low", "medium", "high", "critical"];
+  for (var i = 0; i < priorities.length; i++) {
+    var option = createOption(priorities[i]);
+    option.className = priorities[i];
+    select.appendChild(option);
+    if (priorities[i] == storagePriority) {
+      option.setAttribute("selected", "true");
+    }
+  }
+  form.appendChild(select);
   return form;
 }
-function createDateForm() {
-  var dateInput = createEl("input", "");
-  dateInput.setAttribute("name", "date");
-  dateInput.setAttribute("type", "date");
+function createInput(type, name, value) {
+  var input = createEl("input", "");
+  input.setAttribute("type", type);
+  input.setAttribute("name", name);
+  if (value != undefined) {
+    input.setAttribute("value", value);
+  }
+  return input;
+}
+function createDateForm(num) {
+  var dateInput = createInput("date", "date");
   (0,_date_js__WEBPACK_IMPORTED_MODULE_0__.setToday)(dateInput);
+  var storageTask = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getFromStorage)("task".concat(num));
+  storageTask = storageTask[2];
+  dateInput.setAttribute("value", storageTask);
   return dateInput;
+}
+
+//<textarea name="description" cols="20" rows="3"></textarea>
+
+function createDescriptionForm(oldValue, num) {
+  var form = createEl("form", "");
+  form.setAttribute("id", "descriptionForm".concat(num));
+  var input = createEl("textarea", "");
+  input.setAttribute("name", "description");
+  input.setAttribute("cols", "20");
+  input.setAttribute("rows", "3");
+  input.innerHTML = oldValue;
+  form.appendChild(input);
+  return form;
+}
+function createTitleForm(num) {
+  var form = createEl("form", "");
+  form.setAttribute("id", "titleForm".concat(num));
+  var input = createInput("text", "title");
+  var storageTask = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getFromStorage)("task".concat(num));
+  storageTask = storageTask[0];
+  input.setAttribute("value", storageTask);
+  form.appendChild(input);
+  return form;
+}
+function changeSvgIcon(num, isOpen) {
+  var svgOld = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getById)("svgDots".concat(num));
+  var svgDiv = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getByClass)("svg-div".concat(num));
+  var svgNew;
+  if (isOpen == false) {
+    svgNew = createSvg("m296 711-56-56 240-240 240 240-56 56-184-184-184 184Z");
+  } else if (isOpen == true) {
+    svgNew = createSvg("M480 711 240 471l56-56 184 184 184-184 56 56-240 240Z");
+  }
+  svgOld.remove();
+  svgNew.setAttribute("id", "svgDots".concat(num));
+  svgDiv.appendChild(svgNew);
+  return svgNew;
+}
+function createRemoveProjectForm(num) {
+  var mainDiv = createDiv();
+  mainDiv.setAttribute("class", "remove-project-warning");
+  var form = createEl("form", "");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+  });
+  form.setAttribute("id", "removeProjectForm".concat(num));
+  //let fieldset = createEl("fieldset","");
+
+  var allDiv = createDiv();
+  var projectDiv = createDiv();
+  allDiv.innerHTML = "Project and TASKS";
+  projectDiv.innerHTML = "Just the project";
+  form.appendChild(projectDiv);
+  form.appendChild(allDiv);
+  var radio1 = createInput("radio", "project-decision", "all");
+  var radio2 = createInput("radio", "project-decision", "project");
+  radio2.checked = true;
+  allDiv.appendChild(radio1);
+  allDiv.className = "tasks-div";
+  projectDiv.appendChild(radio2);
+  projectDiv.className = "just-project-div";
+  var submit = createInput("submit", "Submit", "Submit");
+  submit.className = "btn-warning-submit";
+  submit.setAttribute("onclick", "acceptDelete(".concat(num, ")"));
+  var cancelBtn = createEl("button", "Cancel");
+  cancelBtn.setAttribute("class", "btn-warning-cancel");
+  cancelBtn.setAttribute("onclick", "cancelDelete()");
+  form.appendChild(submit);
+  form.appendChild(cancelBtn);
+  var messageDiv = createDiv();
+  var heading = createEl("h1", "Quick question");
+  var taskName = (0,_getters_js__WEBPACK_IMPORTED_MODULE_1__.getFromStorage)("projects");
+  taskName = taskName[num - 1];
+  var message = createEl("p", "Do you want to do delete just the \"".concat(taskName, "\" project or project and it's tasks?"));
+  messageDiv.appendChild(heading);
+  messageDiv.appendChild(message);
+  mainDiv.appendChild(messageDiv);
+  mainDiv.appendChild(form);
+  var icons = document.querySelectorAll(".tick");
+  icons.forEach(function (icon) {
+    return icon.setAttribute("onclick", "message3()");
+  });
+  return mainDiv;
 }
 
 
@@ -339,6 +566,33 @@ function setToStorage(key, value) {
 
 /***/ }),
 
+/***/ "./src/message.js":
+/*!************************!*\
+  !*** ./src/message.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "message": () => (/* binding */ message),
+/* harmony export */   "message2": () => (/* binding */ message2),
+/* harmony export */   "message3": () => (/* binding */ message3)
+/* harmony export */ });
+function message() {
+  alert("Sorry no description for that task :(");
+}
+;
+function message2() {
+  alert("That's an empy project!");
+}
+function message3() {
+  alert("You didn't finish with previous task!");
+}
+;
+
+
+/***/ }),
+
 /***/ "./src/newTask.js":
 /*!************************!*\
   !*** ./src/newTask.js ***!
@@ -400,6 +654,9 @@ function _newTask() {
           (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(taskId, data);
           (0,_task_js__WEBPACK_IMPORTED_MODULE_3__.showTask)(_dom_js__WEBPACK_IMPORTED_MODULE_2__.listMiddle, count, data[0], data[1], data[2], data[3], data[4]);
           (0,_dom_js__WEBPACK_IMPORTED_MODULE_2__.hideMenu)();
+
+          // listMiddle.innerHTML = "";
+          // displayAllTasks();   
           _context.next = 15;
           break;
         case 12:
@@ -444,6 +701,9 @@ function _newProject() {
           storageArray.push(name);
           (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)("projects", storageArray);
           (0,_dom_js__WEBPACK_IMPORTED_MODULE_2__.hideMenu)();
+
+          // listMiddle.innerHTML = "";
+          // displayAllTasks();          
           _context2.next = 20;
           break;
         case 17:
@@ -466,16 +726,20 @@ function removeTask(num) {
   var taskDomLast = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getById)(lastItemName);
   if (count != num) {
     var lastTask = (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.getFromStorage)(lastItemName);
+    console.log(removingItemName);
+    console.log("Count: ".concat(count, " and Num: ").concat(num));
+    taskDomLast.remove();
     (0,_task_js__WEBPACK_IMPORTED_MODULE_3__.showTask)(_dom_js__WEBPACK_IMPORTED_MODULE_2__.listMiddle, num, lastTask[0], lastTask[1], lastTask[2], lastTask[3], lastTask[4], lastTask[5]);
     localStorage.removeItem(lastItemName);
     (0,_getters_js__WEBPACK_IMPORTED_MODULE_0__.setToStorage)(removingItemName, lastTask);
-    console.log(lastTask);
-    taskDomLast.remove();
   } else if (count == num) {
-    localStorage.removeItem(removingItemName);
+    console.log(lastItemName);
+    console.log("Count: ".concat(count, " and Num: ").concat(num));
+    localStorage.removeItem(lastItemName);
+    taskDomLast.remove();
   }
-  taskDomRemove.remove();
   (0,_count_js__WEBPACK_IMPORTED_MODULE_1__.reduceCount)();
+  taskDomRemove.remove();
 }
 
 
@@ -489,9 +753,12 @@ function removeTask(num) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "acceptDelete": () => (/* binding */ acceptDelete),
+/* harmony export */   "cancelDelete": () => (/* binding */ cancelDelete),
 /* harmony export */   "displayAllProjects": () => (/* binding */ displayAllProjects),
 /* harmony export */   "getSameProjectTasks": () => (/* binding */ getSameProjectTasks),
 /* harmony export */   "placeProjectTasks": () => (/* binding */ placeProjectTasks),
+/* harmony export */   "removeProject": () => (/* binding */ removeProject),
 /* harmony export */   "showProjectTasks": () => (/* binding */ showProjectTasks)
 /* harmony export */ });
 /* harmony import */ var _dom_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dom.js */ "./src/dom.js");
@@ -526,18 +793,10 @@ function placeProjectTasks(name, whereToDisplay) {
     (0,_task_js__WEBPACK_IMPORTED_MODULE_4__.showTask)(whereToDisplay, arrayNum, arrayItem[0], arrayItem[1], arrayItem[2], arrayItem[3], arrayItem[4]);
   }
   if (array.length == 0) {
-    var svg = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("".concat(name.replaceAll(" ", "-"), " .project-top svg"));
+    var svg = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("".concat(name.replaceAll(" ", "-"), " .project-top")).children[2];
     svg.setAttribute("onclick", "message2()");
-    // let emptyCheckArray = getFromStorage("isProjectEmpy");
-    // emptyCheckArray.push(true);
-    // setToStorage("isProjectEmpy", emptyCheckArray);        
-  } //else if(array.length > 0) {
-  //     let emptyCheckArray = getFromStorage("isProjectEmpy");
-  //     emptyCheckArray.push(false);
-  //     setToStorage("isProjectEmpy", emptyCheckArray);   
-  // }
+  }
 }
-
 function showProject(whereToDisplay, name, num) {
   var mainDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
   mainDiv.className = "project ".concat(name.replaceAll(" ", "-"));
@@ -547,6 +806,11 @@ function showProject(whereToDisplay, name, num) {
   var divH = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
   var header = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("h1", name);
   divH.appendChild(header);
+  var svgDelete = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("M600 816v-80h160v80H600Zm0-320v-80h280v80H600Zm0 160v-80h240v80H600ZM120 416H80v-80h160v-60h160v60h160v80h-40v360q0 33-23.5 56.5T440 856H200q-33 0-56.5-23.5T120 776V416Zm80 0v360h240V416H200Zm0 0v360-360Z");
+  svgDelete.setAttribute("class", "tick");
+  svgDelete.setAttribute("onclick", "removeProject(".concat(num, ")"));
+  svgDelete.setAttribute("id", "removeProjectBtn".concat(num));
+  divTop.appendChild(svgDelete);
   divTop.appendChild(divH);
   var svgDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
   svgDiv.className = "project-icon".concat(num);
@@ -596,6 +860,80 @@ function showProjectTasks(num) {
     (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("isProjectsShown", isProjectsShown);
   }
 }
+function removeProject(num) {
+  var form = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createRemoveProjectForm)(num);
+  var message = document.body.appendChild(form);
+}
+function cancelDelete() {
+  var message = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("remove-project-warning");
+  _dom_js__WEBPACK_IMPORTED_MODULE_0__.listMiddle.innerHTML = "";
+  message.remove();
+  displayAllProjects();
+  var projects = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)("projects");
+  for (var i = 1; i <= projects.length; i++) {
+    var taskBtn = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getById)("removeProjectBtn".concat(i));
+    taskBtn.setAttribute("onclick", "removeProject(".concat(i, ")"));
+  }
+}
+function acceptDelete(num) {
+  var numArray = num - 1;
+  console.log(numArray);
+  var form = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getById)("removeProjectForm".concat(num));
+  var formData = new FormData(form);
+  var decision = formData.get("project-decision");
+  console.log(decision);
+  var storageProjectsArray = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)("projects");
+  var project = storageProjectsArray[numArray];
+  console.log(project);
+  storageProjectsArray.splice(numArray, 1);
+  (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("projects", storageProjectsArray);
+  if (decision == "project") {
+    var count = (0,_count_js__WEBPACK_IMPORTED_MODULE_3__.getCount)();
+    for (var i = 1; i <= count; i++) {
+      var storageItem = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)("task".concat(i));
+      console.log("Project from tasks: ".concat(storageItem[4], " and project from project array: ").concat(project));
+      if (project == storageItem[4]) {
+        storageItem[4] = "";
+        (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(i), storageItem);
+      }
+    }
+    ;
+  } else if (decision == "all") {
+    var _count = (0,_count_js__WEBPACK_IMPORTED_MODULE_3__.getCount)();
+    var array = [];
+    for (var _i = 1; _i <= _count; _i++) {
+      var _storageItem = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)("task".concat(_i));
+      var storageProjectName = _storageItem[4];
+      if (project == storageProjectName) {
+        console.log("StorageItemName: [".concat(_storageItem, "] and I: ").concat(_i));
+        array.push([_storageItem, _i]);
+      }
+    }
+    ;
+    for (var _i2 = 0, _array = array; _i2 < _array.length; _i2++) {
+      var item = _array[_i2];
+      var _num = item[1];
+      var removingItemName = "task".concat(_num);
+      localStorage.removeItem(removingItemName);
+      (0,_count_js__WEBPACK_IMPORTED_MODULE_3__.reduceCount)();
+    }
+    var array2 = [];
+    for (var _i3 = 1; _i3 <= _count; _i3++) {
+      var itemName = "task".concat(_i3);
+      var itemStorage = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)(itemName);
+      if (itemStorage != null) {
+        array2.push(itemStorage);
+        localStorage.removeItem(itemName);
+      }
+      ;
+    }
+    console.log(array2);
+    for (var _i4 = 0; _i4 < array2.length; _i4++) {
+      (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(_i4 + 1), array2[_i4]);
+    }
+  }
+  cancelDelete();
+}
 
 
 /***/ }),
@@ -639,8 +977,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _create_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./create.js */ "./src/create.js");
 /* harmony import */ var _getters_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getters.js */ "./src/getters.js");
 /* harmony import */ var _count_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./count.js */ "./src/count.js");
-/* harmony import */ var _change_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./change.js */ "./src/change.js");
-
 
 
 
@@ -659,7 +995,8 @@ function showTask(whereToDisplay, count, name, description, date, priority, proj
   var taskName = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("p", name);
   topDiv.appendChild(svgDone);
   topDiv.appendChild(taskName);
-  if (project !== null) {
+  topDiv.setAttribute("class", "taskName".concat(count));
+  if (project !== null && project != "") {
     var projectDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
     projectDiv.className = "task-project task-project".concat(count);
     var projectP = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createEl)("p", "".concat(project, " project"));
@@ -689,9 +1026,9 @@ function showTask(whereToDisplay, count, name, description, date, priority, proj
   taskMainDiv.appendChild(topDiv);
   taskMainDiv.appendChild(bottomDiv);
   taskDiv.appendChild(taskMainDiv);
+  svgDots.setAttribute("id", "svgDots".concat(count));
   if (description != "") {
     svgDots.setAttribute("onclick", "showDescription(".concat(count, ")"));
-    svgDots.setAttribute("id", "svgDots".concat(count));
     var descriptionDiv = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createDiv)();
     descriptionDiv.setAttribute("tabindex", "-1");
     descriptionDiv.className = "description description".concat(count);
@@ -709,57 +1046,41 @@ function showDescription(num) {
   var project = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("task-project".concat(num));
   var isShownObj = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getFromStorage)("task".concat(num));
   var projectCheck = isShownObj[4];
-  var svgDiv = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("svg-div".concat(num));
-  var svgDots = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getById)("svgDots".concat(num));
-  if (projectCheck !== null) {
+  if (projectCheck != null && projectCheck != "") {
     var isShown = isShownObj[5];
     var name = "description".concat(num);
     var desc = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("".concat(name));
     if (isShown == false) {
       desc.style.display = "flex";
       project.style.display = "none";
-      var svgIcon = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("m296 711-56-56 240-240 240 240-56 56-184-184-184 184Z");
+      var svgIcon = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, isShown);
       svgIcon.setAttribute("onclick", "showDescription(".concat(num, ")"));
-      svgDots.remove();
-      svgIcon.setAttribute("id", "svgDots".concat(num));
-      svgDiv.appendChild(svgIcon);
       isShown = true;
       (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(num), [isShownObj[0], isShownObj[1], isShownObj[2], isShownObj[3], isShownObj[4], isShown]);
     } else if (isShown == true) {
       desc.style.display = "none";
       project.style.display = "inline";
-      var _svgIcon = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("M480 711 240 471l56-56 184 184 184-184 56 56-240 240Z");
+      var _svgIcon = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, isShown);
       _svgIcon.setAttribute("onclick", "showDescription(".concat(num, ")"));
-      svgDots.remove();
-      _svgIcon.setAttribute("id", "svgDots".concat(num));
-      svgDiv.appendChild(_svgIcon);
       isShown = false;
       (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(num), [isShownObj[0], isShownObj[1], isShownObj[2], isShownObj[3], isShownObj[4], isShown]);
-      (0,_change_js__WEBPACK_IMPORTED_MODULE_4__.cancel)(num);
     }
-  } else if (projectCheck == null) {
+  } else if (projectCheck == null || projectCheck == "") {
     var _isShown = isShownObj[5];
     var _name = "description".concat(num);
     var _desc = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("".concat(_name));
     if (_isShown == false) {
       _desc.style.display = "inline";
-      var _svgIcon2 = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("m296 711-56-56 240-240 240 240-56 56-184-184-184 184Z");
+      var _svgIcon2 = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, _isShown);
       _svgIcon2.setAttribute("onclick", "showDescription(".concat(num, ")"));
-      svgDots.remove();
-      _svgIcon2.setAttribute("id", "svgDots".concat(num));
-      svgDiv.appendChild(_svgIcon2);
       _isShown = true;
       (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(num), [isShownObj[0], isShownObj[1], isShownObj[2], isShownObj[3], isShownObj[4], _isShown]);
     } else if (_isShown == true) {
       _desc.style.display = "none";
-      var _svgIcon3 = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.createSvg)("M480 711 240 471l56-56 184 184 184-184 56 56-240 240Z");
+      var _svgIcon3 = (0,_create_js__WEBPACK_IMPORTED_MODULE_1__.changeSvgIcon)(num, _isShown);
       _svgIcon3.setAttribute("onclick", "showDescription(".concat(num, ")"));
-      _svgIcon3.setAttribute("id", "svgDots".concat(num));
-      svgDots.remove();
-      svgDiv.appendChild(_svgIcon3);
       _isShown = false;
       (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.setToStorage)("task".concat(num), [isShownObj[0], isShownObj[1], isShownObj[2], isShownObj[3], isShownObj[4], _isShown]);
-      (0,_change_js__WEBPACK_IMPORTED_MODULE_4__.cancel)(num);
     }
   }
 }
@@ -868,7 +1189,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Remove all the styles of the \"User-Agent-Stylesheet\", except for the 'display' property */\r\n*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {\r\n    all: unset;\r\n    display: revert;\r\n  }\r\n \r\n  /* Preferred box-sizing value */\r\n  *,\r\n  *::before,\r\n  *::after {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  /*\r\n    Remove list styles (bullets/numbers)\r\n    in case you use it with normalize.css\r\n  */\r\n  ol, ul {\r\n    list-style: none;\r\n  }\r\n  \r\n  /* For images to not be able to exceed their container */\r\n  img {\r\n    display: block;\r\n    max-width: 100%;\r\n  }\r\n  \r\n  /* Removes spacing between cells in tables */\r\n  table {\r\n    border-collapse: collapse;\r\n  }\r\n  \r\n  /* Revert the 'white-space' property for textarea elements on Safari */\r\n  textarea {\r\n    white-space: revert;\r\n  }\r\n  \r\n  :root {\r\n    --clr-primary:rgb(102, 52, 127);\r\n    --clr-secondary:rgb(158, 71, 132);\r\n    --clr-dark:rgb(55, 48, 107);\r\n    --clr-accent:rgb(210, 118, 133);\r\n\r\n    --clr-low-light: rgb(0, 255, 0, .2);\r\n    --clr-medium-light: rgb(0, 0, 255, .2);\r\n    --clr-high-light: rgb(255, 255, 0, .2);\r\n    --clr-critical-light: rgb(255, 0, 0, .2);\r\n\r\n    --clr-low-strong: rgb(0, 255, 0);\r\n    --clr-medium-strong: rgb(0, 0, 255);\r\n    --clr-high-strong: gold;\r\n    --clr-critical-strong: rgb(255, 0, 0);\r\n\r\n\r\n\r\n\r\n    --fs-average: 1rem;\r\n    --fs-medium: calc(var(--fs-average) * 1.25);\r\n    --fs-big: calc(var(--fs-average) * 1.5rem);\r\n    --fs-large:calc(var(--fs-average) * 2rem); \r\n    \r\n  }\r\n\r\n  .low {\r\n    background-color: var(--clr-low-light);\r\n  }\r\n\r\n  .medium {\r\n    background-color: var(--clr-medium-light);\r\n  }\r\n\r\n  .high {\r\n    background-color: var(--clr-high-light);\r\n  }\r\n\r\n  .critical{\r\n    background-color: var(--clr-critical-light);\r\n  }\r\n\r\n  .critical span {\r\n    color: var(--clr-critical-strong);    \r\n  }\r\n\r\n  .high span {\r\n    color: var(--clr-high-strong);    \r\n  }\r\n\r\n  .medium span {\r\n    color: var(--clr-medium-strong);    \r\n  }\r\n\r\n  .low span {\r\n    color: var(--clr-low-strong);    \r\n  } \r\n\r\n\r\n  .critical .description p  {\r\n      border-bottom:3px solid var(--clr-critical-light);  \r\n      border-inline:3px solid var(--clr-critical-light);\r\n  }\r\n\r\n  \r\n  .high .description p {\r\n    border-bottom:3px solid var(--clr-high-light);  \r\n    border-inline:3px solid var(--clr-high-light);\r\n  }\r\n\r\n  .medium .description p {\r\n    border-bottom:3px solid var(--clr-medium-light);  \r\n    border-inline:3px solid var(--clr-medium-light);\r\n  }\r\n\r\n  .low .description p {\r\n    border-bottom:3px solid var(--clr-low-light);  \r\n    border-inline:3px solid var(--clr-low-light);\r\n  }\r\n\r\n\r\n\r\n\r\n  * {\r\n    font-family: 'Fira Sans', sans-serif;\r\n  }\r\n\r\nmain {\r\n    width: 100%;    \r\n}\r\n\r\n.container  {\r\n    margin-inline: auto; \r\n    width: min(80%, 50rem);\r\n}\r\n\r\n.list {\r\n    \r\n    margin-inline: auto;      \r\n}\r\n\r\n.list-top {\r\n    background-color: var(--clr-dark);\r\n    color: white;\r\n    margin-block: auto;\r\n    \r\n}\r\n\r\n.list-top, .list-middle {\r\n    padding-inline:3%;\r\n}\r\n\r\n.list-middle {\r\n    padding-block: 1rem;\r\n}\r\n\r\n.list-top {\r\n    padding-top: 1rem;\r\n}\r\n\r\n.nav {\r\n    margin-top: 2rem;\r\n    padding-bottom: 1rem;\r\n}\r\n\r\n.nav ul{\r\n    display: flex;\r\n    gap: 1rem;\r\n    text-transform: capitalize;    \r\n}\r\n\r\n\r\n\r\n.nav ul li:hover {\r\n  cursor: pointer;\r\n  border-bottom: 2px solid white;\r\n  /* text-decoration: underline; */\r\n}\r\n\r\n.buttons {\r\n    font-size: var(--fs-medium);\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap:1rem;\r\n}\r\n\r\n.buttons button {\r\n    background-color: var(--clr-accent);\r\n    padding: .5rem 10%;\r\n    text-transform: uppercase;\r\n}\r\n\r\n\r\n.buttons button:hover {\r\n    transition: all .5s ease;\r\n    cursor: pointer;\r\n    background-color: var(--clr-secondary);\r\n    color: var(--clr-dark);\r\n}\r\n\r\n\r\n.task {  \r\n  margin-block: 1rem; \r\n  position: relative;\r\n}\r\n\r\n.task form {\r\n  padding: .5rem;\r\n}\r\n\r\n.task form > *{\r\n  margin: 3%;\r\n}\r\n\r\n.task option, .task select, .task form {\r\n  text-transform: uppercase;\r\n  color: black;\r\n  width: min-content;  \r\n  text-align: center;  \r\n}\r\n\r\n.task select {\r\n  font-weight: 900;\r\n  font-style: italic;  \r\n}\r\n\r\n.task option {\r\n  font-style: normal;\r\n  font-weight: normal;\r\n}\r\n\r\n\r\n.task input[type=submit] {  \r\n  padding: 0;\r\n  border-radius: 0;\r\n}\r\n\r\n.edit-buttons input {\r\n  margin-right: 5%;\r\n}\r\n\r\n.edit-buttons button {\r\n  margin-inline: auto;\r\n}\r\n\r\n.task input[type=submit], .task button {\r\n  color: black;\r\n  background-color: lightgrey;  \r\n  padding: 2%;\r\n  border-radius: 1rem;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.task input[type=submit]:hover {\r\n  color: white;\r\n  background-color: green;\r\n}\r\n\r\n.task button:hover {\r\n  color: white;\r\n  cursor: pointer;\r\n  background-color: red;\r\n}\r\n\r\n.task form {\r\n  border: 1px solid black;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)) {\r\n  border-bottom: 1px solid black;\r\n  opacity: .7;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)):hover {  \r\n  opacity: 1;\r\n}\r\n\r\n.task-main  {\r\n    display: flex;\r\n    flex-direction: row;\r\n    align-content: center;\r\n    justify-content: space-between;    \r\n    font-size:var(--fs-medium);   \r\n    padding: .5rem;\r\n    padding-bottom: 1rem;   \r\n}\r\n\r\n.task-main p{\r\n    display: inline;\r\n}\r\n\r\n.task-main > div {    \r\n    display: flex;    \r\n    align-content: center;\r\n}\r\n\r\n.list-middle {\r\n    background-color: whitesmoke;\r\n}\r\n\r\n.task-main svg:first-child {\r\n    margin-right: .5rem;\r\n}\r\n\r\n\r\n\r\nsvg {\r\n    opacity: .5;\r\n    transition: color .5s ease;\r\n}\r\n\r\nsvg:hover {\r\n    cursor: pointer;\r\n    opacity: 1;    \r\n    transition: color .5s ease;\r\n}\r\n\r\n.tick:hover {\r\n    fill: red;\r\n}\r\n\r\n\r\n.info {    \r\n    font-size: var(--fs-average);  \r\n}\r\n\r\n.info span {\r\n    text-transform: uppercase;\r\n    margin-right: .3rem;\r\n    \r\n}\r\n\r\n.current-slide {\r\n    border-bottom: 2px solid white;\r\n}\r\n\r\n.description {    \r\n    font-size: var(--fs-average);      \r\n    font-style: italic;\r\n    display: none;\r\n    position: relative;\r\n}\r\n\r\n.description p{\r\n  padding: 1rem; \r\n  background-color: white;\r\n  width: 100%;\r\n}\r\n\r\n.description svg {\r\n  position: absolute;\r\n  right: 1%;\r\n  top: 20%;\r\n}\r\n\r\n.new-task-form, .background-color, .new-project-form {  \r\n  position: absolute;  \r\n}\r\n\r\n.background-color {\r\n  \r\n  background-color: black;\r\n  width: 100vw;\r\n  height: calc(100% + 30vh);\r\n  opacity: .7;\r\n}\r\n\r\n\r\n.new-task-form, .background-color, .main-absolute, .new-project-form {\r\n  visibility: hidden;\r\n}\r\n\r\n.nav select:hover {\r\n  color: white;\r\n}\r\n\r\n.new-task-form, .new-project-form, .background-color {\r\n  z-index: 10000;\r\n  \r\n}\r\n\r\n.main-absolute {  \r\n  display: grid;  \r\n  justify-items: center;\r\n  \r\n\r\n}\r\n\r\n\r\nform {   \r\n  color: white;\r\n  display: grid;\r\n}\r\n\r\nfieldset {  \r\n  background-color: var(--clr-secondary);\r\n  padding: 1rem;\r\n  border-radius: 20px;\r\n  margin:1rem;\r\n  text-align:center;\r\n}\r\n\r\nlegend{\r\n  background-color: var(--clr-accent);\r\n  border-radius: 10px;\r\n  padding:.5rem 1rem;\r\n}\r\n\r\ninput[type=text], textarea {\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\ninput[type=submit]:hover, select:hover,input[type=date]:hover,.close-button:hover {\r\n  color: black;  \r\n  cursor: pointer;\r\n  transition: all .5s ease;\r\n}\r\n\r\n\r\ninput[type=submit],.close-button {\r\n  background-color:var(--clr-secondary);\r\n  margin-inline: auto;\r\n  padding: 1rem 3rem;\r\n  border-radius: 50px;\r\n  transition: background-color .5s ease;\r\n}\r\n\r\ninput[type=submit]:hover,.close-button:hover {\r\n  background-color:var(--clr-dark);  \r\n  transition: background-color .5s ease;\r\n}\r\n\r\noption {\r\n  color: black; \r\n}\r\n\r\n.task-project {\r\n  font-style: italic;\r\n  font-size: var(--fs-average);\r\n  position: absolute;\r\n  bottom:0;\r\n  left: 2.5rem;\r\n  \r\n  opacity: .7;\r\n  bottom: 15%;\r\n}\r\n\r\nlegend {\r\n  position: relative;\r\n}\r\n.optional::after {\r\n  content: \"(optional field)\"; \r\n  display: block;\r\n  font-size: .8em;\r\n  font-style: italic;\r\n}\r\n\r\n.svg-div {\r\n  display: flex;\r\n  flex-direction: column;\r\n  margin-left: 1rem;  \r\n}\r\n\r\n.project {\r\n  margin-block:1rem;\r\n  border-bottom:3px solid var(--clr-accent);  \r\n  border-inline:3px solid var(--clr-accent);\r\n}\r\n\r\n\r\n.project-top {\r\n  display: flex;\r\n  justify-content: space-between; \r\n  padding: 1rem; \r\n  font-size: 1.5rem;\r\n  font-style: italic;\r\n  font-weight: bold;\r\n  background-color: var(--clr-accent);\r\n}\r\n\r\n\r\n\r\n.project-hidden {\r\n  display: none;\r\n  background-color: white;\r\n  padding-inline: 1rem;\r\n}\r\n\r\n.project-hidden  .task-project {\r\n  visibility: hidden !important;\r\n}\r\n\r\n\r\n\r\n\r\n@media (max-width: 31.25rem) {\r\n  :root {\r\n    --fs-average: 1rem;\r\n  } \r\n  .task-main  {    \r\n    flex-direction: column;  \r\n    gap: 2rem;\r\n  }   \r\n\r\n  \r\n  .task-project {     \r\n    top: 30%;\r\n    left: 2.5rem;    \r\n  }\r\n\r\n  .svg-div {\r\n    position: absolute;\r\n    right: 1rem;\r\n    top: 20%;\r\n  }\r\n\r\n  .info {\r\n    padding-left:33px;\r\n  }\r\n  \r\n}\r\n\r\n", "",{"version":3,"sources":["webpack://./src/styles.css"],"names":[],"mappings":"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","sourcesContent":["\r\n/* Remove all the styles of the \"User-Agent-Stylesheet\", except for the 'display' property */\r\n*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {\r\n    all: unset;\r\n    display: revert;\r\n  }\r\n \r\n  /* Preferred box-sizing value */\r\n  *,\r\n  *::before,\r\n  *::after {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  /*\r\n    Remove list styles (bullets/numbers)\r\n    in case you use it with normalize.css\r\n  */\r\n  ol, ul {\r\n    list-style: none;\r\n  }\r\n  \r\n  /* For images to not be able to exceed their container */\r\n  img {\r\n    display: block;\r\n    max-width: 100%;\r\n  }\r\n  \r\n  /* Removes spacing between cells in tables */\r\n  table {\r\n    border-collapse: collapse;\r\n  }\r\n  \r\n  /* Revert the 'white-space' property for textarea elements on Safari */\r\n  textarea {\r\n    white-space: revert;\r\n  }\r\n  \r\n  :root {\r\n    --clr-primary:rgb(102, 52, 127);\r\n    --clr-secondary:rgb(158, 71, 132);\r\n    --clr-dark:rgb(55, 48, 107);\r\n    --clr-accent:rgb(210, 118, 133);\r\n\r\n    --clr-low-light: rgb(0, 255, 0, .2);\r\n    --clr-medium-light: rgb(0, 0, 255, .2);\r\n    --clr-high-light: rgb(255, 255, 0, .2);\r\n    --clr-critical-light: rgb(255, 0, 0, .2);\r\n\r\n    --clr-low-strong: rgb(0, 255, 0);\r\n    --clr-medium-strong: rgb(0, 0, 255);\r\n    --clr-high-strong: gold;\r\n    --clr-critical-strong: rgb(255, 0, 0);\r\n\r\n\r\n\r\n\r\n    --fs-average: 1rem;\r\n    --fs-medium: calc(var(--fs-average) * 1.25);\r\n    --fs-big: calc(var(--fs-average) * 1.5rem);\r\n    --fs-large:calc(var(--fs-average) * 2rem); \r\n    \r\n  }\r\n\r\n  .low {\r\n    background-color: var(--clr-low-light);\r\n  }\r\n\r\n  .medium {\r\n    background-color: var(--clr-medium-light);\r\n  }\r\n\r\n  .high {\r\n    background-color: var(--clr-high-light);\r\n  }\r\n\r\n  .critical{\r\n    background-color: var(--clr-critical-light);\r\n  }\r\n\r\n  .critical span {\r\n    color: var(--clr-critical-strong);    \r\n  }\r\n\r\n  .high span {\r\n    color: var(--clr-high-strong);    \r\n  }\r\n\r\n  .medium span {\r\n    color: var(--clr-medium-strong);    \r\n  }\r\n\r\n  .low span {\r\n    color: var(--clr-low-strong);    \r\n  } \r\n\r\n\r\n  .critical .description p  {\r\n      border-bottom:3px solid var(--clr-critical-light);  \r\n      border-inline:3px solid var(--clr-critical-light);\r\n  }\r\n\r\n  \r\n  .high .description p {\r\n    border-bottom:3px solid var(--clr-high-light);  \r\n    border-inline:3px solid var(--clr-high-light);\r\n  }\r\n\r\n  .medium .description p {\r\n    border-bottom:3px solid var(--clr-medium-light);  \r\n    border-inline:3px solid var(--clr-medium-light);\r\n  }\r\n\r\n  .low .description p {\r\n    border-bottom:3px solid var(--clr-low-light);  \r\n    border-inline:3px solid var(--clr-low-light);\r\n  }\r\n\r\n\r\n\r\n\r\n  * {\r\n    font-family: 'Fira Sans', sans-serif;\r\n  }\r\n\r\nmain {\r\n    width: 100%;    \r\n}\r\n\r\n.container  {\r\n    margin-inline: auto; \r\n    width: min(80%, 50rem);\r\n}\r\n\r\n.list {\r\n    \r\n    margin-inline: auto;      \r\n}\r\n\r\n.list-top {\r\n    background-color: var(--clr-dark);\r\n    color: white;\r\n    margin-block: auto;\r\n    \r\n}\r\n\r\n.list-top, .list-middle {\r\n    padding-inline:3%;\r\n}\r\n\r\n.list-middle {\r\n    padding-block: 1rem;\r\n}\r\n\r\n.list-top {\r\n    padding-top: 1rem;\r\n}\r\n\r\n.nav {\r\n    margin-top: 2rem;\r\n    padding-bottom: 1rem;\r\n}\r\n\r\n.nav ul{\r\n    display: flex;\r\n    gap: 1rem;\r\n    text-transform: capitalize;    \r\n}\r\n\r\n\r\n\r\n.nav ul li:hover {\r\n  cursor: pointer;\r\n  border-bottom: 2px solid white;\r\n  /* text-decoration: underline; */\r\n}\r\n\r\n.buttons {\r\n    font-size: var(--fs-medium);\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap:1rem;\r\n}\r\n\r\n.buttons button {\r\n    background-color: var(--clr-accent);\r\n    padding: .5rem 10%;\r\n    text-transform: uppercase;\r\n}\r\n\r\n\r\n.buttons button:hover {\r\n    transition: all .5s ease;\r\n    cursor: pointer;\r\n    background-color: var(--clr-secondary);\r\n    color: var(--clr-dark);\r\n}\r\n\r\n\r\n.task {  \r\n  margin-block: 1rem; \r\n  position: relative;\r\n}\r\n\r\n.task form {\r\n  padding: .5rem;\r\n}\r\n\r\n.task form > *{\r\n  margin: 3%;\r\n}\r\n\r\n.task option, .task select, .task form {\r\n  text-transform: uppercase;\r\n  color: black;\r\n  width: min-content;  \r\n  text-align: center;  \r\n}\r\n\r\n.task select {\r\n  font-weight: 900;\r\n  font-style: italic;  \r\n}\r\n\r\n.task option {\r\n  font-style: normal;\r\n  font-weight: normal;\r\n}\r\n\r\n\r\n.task input[type=submit] {  \r\n  padding: 0;\r\n  border-radius: 0;\r\n}\r\n\r\n.edit-buttons input {\r\n  margin-right: 5%;\r\n}\r\n\r\n.edit-buttons button {\r\n  margin-inline: auto;\r\n}\r\n\r\n.task input[type=submit], .task button {\r\n  color: black;\r\n  background-color: lightgrey;  \r\n  padding: 2%;\r\n  border-radius: 1rem;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.task input[type=submit]:hover {\r\n  color: white;\r\n  background-color: green;\r\n}\r\n\r\n.task button:hover {\r\n  color: white;\r\n  cursor: pointer;\r\n  background-color: red;\r\n}\r\n\r\n.task form {\r\n  border: 1px solid black;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)) {\r\n  border-bottom: 1px solid black;\r\n  opacity: .7;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)):hover {  \r\n  opacity: 1;\r\n}\r\n\r\n.task-main  {\r\n    display: flex;\r\n    flex-direction: row;\r\n    align-content: center;\r\n    justify-content: space-between;    \r\n    font-size:var(--fs-medium);   \r\n    padding: .5rem;\r\n    padding-bottom: 1rem;   \r\n}\r\n\r\n.task-main p{\r\n    display: inline;\r\n}\r\n\r\n.task-main > div {    \r\n    display: flex;    \r\n    align-content: center;\r\n}\r\n\r\n.list-middle {\r\n    background-color: whitesmoke;\r\n}\r\n\r\n.task-main svg:first-child {\r\n    margin-right: .5rem;\r\n}\r\n\r\n\r\n\r\nsvg {\r\n    opacity: .5;\r\n    transition: color .5s ease;\r\n}\r\n\r\nsvg:hover {\r\n    cursor: pointer;\r\n    opacity: 1;    \r\n    transition: color .5s ease;\r\n}\r\n\r\n.tick:hover {\r\n    fill: red;\r\n}\r\n\r\n\r\n.info {    \r\n    font-size: var(--fs-average);  \r\n}\r\n\r\n.info span {\r\n    text-transform: uppercase;\r\n    margin-right: .3rem;\r\n    \r\n}\r\n\r\n.current-slide {\r\n    border-bottom: 2px solid white;\r\n}\r\n\r\n.description {    \r\n    font-size: var(--fs-average);      \r\n    font-style: italic;\r\n    display: none;\r\n    position: relative;\r\n}\r\n\r\n.description p{\r\n  padding: 1rem; \r\n  background-color: white;\r\n  width: 100%;\r\n}\r\n\r\n.description svg {\r\n  position: absolute;\r\n  right: 1%;\r\n  top: 20%;\r\n}\r\n\r\n.new-task-form, .background-color, .new-project-form {  \r\n  position: absolute;  \r\n}\r\n\r\n.background-color {\r\n  \r\n  background-color: black;\r\n  width: 100vw;\r\n  height: calc(100% + 30vh);\r\n  opacity: .7;\r\n}\r\n\r\n\r\n.new-task-form, .background-color, .main-absolute, .new-project-form {\r\n  visibility: hidden;\r\n}\r\n\r\n.nav select:hover {\r\n  color: white;\r\n}\r\n\r\n.new-task-form, .new-project-form, .background-color {\r\n  z-index: 10000;\r\n  \r\n}\r\n\r\n.main-absolute {  \r\n  display: grid;  \r\n  justify-items: center;\r\n  \r\n\r\n}\r\n\r\n\r\nform {   \r\n  color: white;\r\n  display: grid;\r\n}\r\n\r\nfieldset {  \r\n  background-color: var(--clr-secondary);\r\n  padding: 1rem;\r\n  border-radius: 20px;\r\n  margin:1rem;\r\n  text-align:center;\r\n}\r\n\r\nlegend{\r\n  background-color: var(--clr-accent);\r\n  border-radius: 10px;\r\n  padding:.5rem 1rem;\r\n}\r\n\r\ninput[type=text], textarea {\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\ninput[type=submit]:hover, select:hover,input[type=date]:hover,.close-button:hover {\r\n  color: black;  \r\n  cursor: pointer;\r\n  transition: all .5s ease;\r\n}\r\n\r\n\r\ninput[type=submit],.close-button {\r\n  background-color:var(--clr-secondary);\r\n  margin-inline: auto;\r\n  padding: 1rem 3rem;\r\n  border-radius: 50px;\r\n  transition: background-color .5s ease;\r\n}\r\n\r\ninput[type=submit]:hover,.close-button:hover {\r\n  background-color:var(--clr-dark);  \r\n  transition: background-color .5s ease;\r\n}\r\n\r\noption {\r\n  color: black; \r\n}\r\n\r\n.task-project {\r\n  font-style: italic;\r\n  font-size: var(--fs-average);\r\n  position: absolute;\r\n  bottom:0;\r\n  left: 2.5rem;\r\n  \r\n  opacity: .7;\r\n  bottom: 15%;\r\n}\r\n\r\nlegend {\r\n  position: relative;\r\n}\r\n.optional::after {\r\n  content: \"(optional field)\"; \r\n  display: block;\r\n  font-size: .8em;\r\n  font-style: italic;\r\n}\r\n\r\n.svg-div {\r\n  display: flex;\r\n  flex-direction: column;\r\n  margin-left: 1rem;  \r\n}\r\n\r\n.project {\r\n  margin-block:1rem;\r\n  border-bottom:3px solid var(--clr-accent);  \r\n  border-inline:3px solid var(--clr-accent);\r\n}\r\n\r\n\r\n.project-top {\r\n  display: flex;\r\n  justify-content: space-between; \r\n  padding: 1rem; \r\n  font-size: 1.5rem;\r\n  font-style: italic;\r\n  font-weight: bold;\r\n  background-color: var(--clr-accent);\r\n}\r\n\r\n\r\n\r\n.project-hidden {\r\n  display: none;\r\n  background-color: white;\r\n  padding-inline: 1rem;\r\n}\r\n\r\n.project-hidden  .task-project {\r\n  visibility: hidden !important;\r\n}\r\n\r\n\r\n\r\n\r\n@media (max-width: 31.25rem) {\r\n  :root {\r\n    --fs-average: 1rem;\r\n  } \r\n  .task-main  {    \r\n    flex-direction: column;  \r\n    gap: 2rem;\r\n  }   \r\n\r\n  \r\n  .task-project {     \r\n    top: 30%;\r\n    left: 2.5rem;    \r\n  }\r\n\r\n  .svg-div {\r\n    position: absolute;\r\n    right: 1rem;\r\n    top: 20%;\r\n  }\r\n\r\n  .info {\r\n    padding-left:33px;\r\n  }\r\n  \r\n}\r\n\r\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\r\n/* Remove all the styles of the \"User-Agent-Stylesheet\", except for the 'display' property */\r\n*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {\r\n    all: unset;\r\n    display: revert;\r\n  }\r\n \r\n  /* Preferred box-sizing value */\r\n  *,\r\n  *::before,\r\n  *::after {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  /*\r\n    Remove list styles (bullets/numbers)\r\n    in case you use it with normalize.css\r\n  */\r\n  ol, ul {\r\n    list-style: none;\r\n  }\r\n  \r\n  /* For images to not be able to exceed their container */\r\n  img {\r\n    display: block;\r\n    max-width: 100%;\r\n  }\r\n  \r\n  /* Removes spacing between cells in tables */\r\n  table {\r\n    border-collapse: collapse;\r\n  }\r\n  \r\n  /* Revert the 'white-space' property for textarea elements on Safari */\r\n  textarea {\r\n    white-space: revert;\r\n  }\r\n  \r\n  :root {\r\n    --clr-primary:rgb(102, 52, 127);\r\n    --clr-secondary:rgb(158, 71, 132);\r\n    --clr-dark:rgb(55, 48, 107);\r\n    --clr-accent:rgb(210, 118, 133);\r\n\r\n    --clr-low-light: rgb(0, 255, 0, .2);\r\n    --clr-medium-light: rgb(0, 0, 255, .2);\r\n    --clr-high-light: rgb(255, 255, 0, .2);\r\n    --clr-critical-light: rgb(255, 0, 0, .2);\r\n\r\n    --clr-low-strong: rgb(0, 255, 0);\r\n    --clr-medium-strong: rgb(0, 0, 255);\r\n    --clr-high-strong: gold;\r\n    --clr-critical-strong: rgb(255, 0, 0);\r\n\r\n\r\n\r\n\r\n    --fs-average: 1rem;\r\n    --fs-medium: calc(var(--fs-average) * 1.25);\r\n    --fs-big: calc(var(--fs-average) * 1.5rem);\r\n    --fs-large:calc(var(--fs-average) * 2rem); \r\n    \r\n  }\r\n\r\n  .low {\r\n    background-color: var(--clr-low-light);\r\n  }\r\n\r\n  .medium {\r\n    background-color: var(--clr-medium-light);\r\n  }\r\n\r\n  .high {\r\n    background-color: var(--clr-high-light);\r\n  }\r\n\r\n  .critical{\r\n    background-color: var(--clr-critical-light);\r\n  }\r\n\r\n  .critical span {\r\n    color: var(--clr-critical-strong);    \r\n  }\r\n\r\n  .high span {\r\n    color: var(--clr-high-strong);    \r\n  }\r\n\r\n  .medium span {\r\n    color: var(--clr-medium-strong);    \r\n  }\r\n\r\n  .low span {\r\n    color: var(--clr-low-strong);    \r\n  } \r\n\r\n\r\n  .critical .description p  {\r\n      border-bottom:3px solid var(--clr-critical-light);  \r\n      border-inline:3px solid var(--clr-critical-light);\r\n  }\r\n\r\n  \r\n  .high .description p {\r\n    border-bottom:3px solid var(--clr-high-light);  \r\n    border-inline:3px solid var(--clr-high-light);\r\n  }\r\n\r\n  .medium .description p {\r\n    border-bottom:3px solid var(--clr-medium-light);  \r\n    border-inline:3px solid var(--clr-medium-light);\r\n  }\r\n\r\n  .low .description p {\r\n    border-bottom:3px solid var(--clr-low-light);  \r\n    border-inline:3px solid var(--clr-low-light);\r\n  }\r\n\r\n\r\n\r\n\r\n  * {\r\n    font-family: 'Fira Sans', sans-serif;\r\n  }\r\n\r\nmain {\r\n    width: 100%;    \r\n}\r\n\r\n.container  {\r\n    margin-inline: auto; \r\n    width: min(80%, 50rem);\r\n}\r\n\r\n.list {\r\n    \r\n    margin-inline: auto;      \r\n}\r\n\r\n.list-top {\r\n    background-color: var(--clr-dark);\r\n    color: white;\r\n    margin-block: auto;\r\n    \r\n}\r\n\r\n.list-top, .list-middle {\r\n    padding-inline:3%;\r\n}\r\n\r\n.list-middle {\r\n    padding-block: 1rem;\r\n}\r\n\r\n.list-top {\r\n    padding-top: 1rem;\r\n}\r\n\r\n.nav {\r\n    margin-top: 2rem;\r\n    padding-bottom: 1rem;\r\n}\r\n\r\n.nav ul{\r\n    display: flex;\r\n    gap: 1rem;\r\n    text-transform: capitalize;    \r\n}\r\n\r\n\r\n\r\n.nav ul li:hover {\r\n  cursor: pointer;\r\n  border-bottom: 2px solid white;\r\n  /* text-decoration: underline; */\r\n}\r\n\r\n.buttons {\r\n    font-size: var(--fs-medium);\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap:1rem;\r\n}\r\n\r\n.buttons button {\r\n    background-color: var(--clr-accent);\r\n    padding: .5rem 10%;\r\n    text-transform: uppercase;\r\n}\r\n\r\n\r\n.buttons button:hover {\r\n    transition: all .5s ease;\r\n    cursor: pointer;\r\n    background-color: var(--clr-secondary);\r\n    color: var(--clr-dark);\r\n}\r\n\r\n\r\n.task {  \r\n  margin-block: 1rem; \r\n  position: relative;\r\n}\r\n\r\n.task form {\r\n  padding: .5rem;\r\n}\r\n\r\n.task form > *{\r\n  margin: 3%;\r\n}\r\n\r\n.task option, .task select, .task form {\r\n  text-transform: uppercase;\r\n  color: black;\r\n  width: min-content;  \r\n  text-align: center;  \r\n}\r\n\r\n.task select {\r\n  font-weight: 900;\r\n  font-style: italic;  \r\n}\r\n\r\n.task option {\r\n  font-style: normal;\r\n  font-weight: normal;\r\n}\r\n\r\n\r\n.task input[type=submit] {  \r\n  padding: 0;\r\n  border-radius: 0;\r\n}\r\n\r\n.edit-buttons input {\r\n  margin-right: 5%;\r\n}\r\n\r\n.edit-buttons button {\r\n  margin-inline: auto;\r\n}\r\n\r\n.task input[type=submit], .task button {\r\n  color: black;\r\n  background-color: lightgrey;  \r\n  padding: 2%;\r\n  border-radius: 1rem;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.task input[type=submit]:hover {\r\n  color: white;\r\n  background-color: green;\r\n}\r\n\r\n.task button:hover {\r\n  color: white;\r\n  cursor: pointer;\r\n  background-color: red;\r\n}\r\n\r\n.task form {\r\n  border: 1px solid black;\r\n  background-color: lightgrey; \r\n}\r\n.task form input, .task form  select, .task button {\r\n  opacity: .7;\r\n}\r\n\r\n.task form input:not(input[type=submit]), .task form  select{\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)):hover {  \r\n  opacity: 1;\r\n}\r\n\r\n.task form input[type=text] {\r\n  text-transform: none;\r\n  opacity: 1;\r\n  font-style: normal;\r\n}\r\n\r\n.task-main  {\r\n    display: flex;\r\n    flex-direction: row;\r\n    align-content: center;\r\n    justify-content: space-between;    \r\n    font-size:var(--fs-medium);   \r\n    padding: .5rem;\r\n    padding-bottom: 1rem;   \r\n}\r\n\r\n.task-main p{\r\n    display: inline;\r\n}\r\n\r\n.task-main > div {    \r\n    display: flex;    \r\n    align-content: center;\r\n}\r\n\r\n.list-middle {\r\n    background-color: whitesmoke;\r\n}\r\n\r\n.task-main svg:first-child {\r\n    margin-right: .5rem;\r\n}\r\n\r\n\r\n\r\nsvg {\r\n    opacity: .5;\r\n    transition: color .5s ease;\r\n}\r\n\r\nsvg:hover {\r\n    cursor: pointer;\r\n    opacity: 1;    \r\n    transition: color .5s ease;\r\n}\r\n\r\n.tick:hover {\r\n    fill: red;\r\n}\r\n\r\n\r\n.info {    \r\n    font-size: var(--fs-average);  \r\n}\r\n\r\n.info span {\r\n    text-transform: uppercase;\r\n    margin-right: .3rem;\r\n    \r\n}\r\n\r\n.current-slide {\r\n    border-bottom: 2px solid white;\r\n}\r\n\r\n.description {    \r\n    font-size: var(--fs-average);      \r\n    font-style: italic;\r\n    display: none;   \r\n}\r\n\r\n.description p{\r\n  padding: 1rem; \r\n  background-color: white;\r\n  width: 100%;\r\n}\r\n\r\n.description svg {\r\n  position: absolute;\r\n  right: 1%;\r\n  top: 20%;\r\n}\r\n\r\n.new-task-form, .background-color, .new-project-form {  \r\n  position: absolute;  \r\n}\r\n\r\n.background-color {\r\n  \r\n  background-color: black;\r\n  width: 100vw;\r\n  height: calc(100% + 30vh);\r\n  opacity: .7;\r\n}\r\n\r\n\r\n.new-task-form, .background-color, .main-absolute, .new-project-form {\r\n  visibility: hidden;\r\n}\r\n\r\n.nav select:hover {\r\n  color: white;\r\n}\r\n\r\n.new-task-form, .new-project-form, .background-color {\r\n  z-index: 10000;\r\n  \r\n}\r\n\r\n.main-absolute {  \r\n  display: grid;  \r\n  justify-items: center;\r\n  \r\n\r\n}\r\n\r\n\r\nform {   \r\n  color: white;\r\n  display: grid;\r\n  position: relative;\r\n}\r\n\r\nfieldset {  \r\n  background-color: var(--clr-secondary);\r\n  padding: 1rem;\r\n  border-radius: 20px;\r\n  margin:1rem;\r\n  text-align:center;\r\n}\r\n\r\nlegend{\r\n  background-color: var(--clr-accent);\r\n  border-radius: 10px;\r\n  padding:.5rem 1rem;\r\n}\r\n\r\ninput[type=text], textarea {\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\ninput[type=submit]:hover, select:hover,input[type=date]:hover,.close-button:hover {\r\n  color: black;  \r\n  cursor: pointer;\r\n  transition: all .5s ease;\r\n}\r\n\r\n\r\ninput[type=submit],.close-button {\r\n  background-color:var(--clr-secondary);\r\n  margin-inline: auto;\r\n  padding: 1rem 3rem;\r\n  border-radius: 50px;\r\n  transition: background-color .5s ease;\r\n}\r\n\r\ninput[type=submit]:hover,.close-button:hover {\r\n  background-color:var(--clr-dark);  \r\n  transition: background-color .5s ease;\r\n}\r\n\r\noption {\r\n  color: black; \r\n}\r\n\r\n.task-project {\r\n  font-style: italic;\r\n  font-size: var(--fs-average);\r\n  position: absolute;\r\n  bottom:0;\r\n  left: 2.5rem;\r\n  \r\n  opacity: .7;\r\n  bottom: 15%;\r\n}\r\n\r\nlegend {\r\n  position: relative;\r\n}\r\n.optional::after {\r\n  content: \"(optional field)\"; \r\n  display: block;\r\n  font-size: .8em;\r\n  font-style: italic;\r\n}\r\n\r\n.svg-div {\r\n  display: flex;\r\n  flex-direction: column;\r\n  margin-left: 1rem;  \r\n}\r\n\r\n.project {\r\n  margin-block:1rem;\r\n  border-bottom:3px solid var(--clr-accent);  \r\n  border-inline:3px solid var(--clr-accent);\r\n}\r\n\r\n\r\n.project-top {\r\n  display: flex;\r\n  justify-content: space-between; \r\n  padding: 1rem; \r\n  font-size: 1.5rem;\r\n  font-style: italic;\r\n  font-weight: bold;\r\n  background-color: var(--clr-accent);\r\n}\r\n\r\n\r\n\r\n.project-hidden {\r\n  display: none;\r\n  background-color: white;\r\n  padding-inline: 1rem;\r\n}\r\n\r\n.project-hidden  .task-project {\r\n  visibility: hidden !important;\r\n}\r\n\r\n\r\n.btn-description-redo, .btn-description-clear {\r\n  position: absolute;\r\n  border-bottom: none !important;  \r\n}\r\n\r\n.btn-description-redo {\r\n  left: 75%;  \r\n  \r\n}\r\n.description-form textarea{\r\n  border-bottom: none;\r\n}\r\n\r\n.description-form textarea {\r\n  width: 14.5rem;\r\n  padding-right:4rem; \r\n  word-wrap:break-word ;\r\n  text-wrap:unrestricted; \r\n}\r\n\r\n.title-form input, .description-form textarea, .title-form select  {\r\n    text-align: left; \r\n    text-transform: none;\r\n    font-style: normal;   \r\n}\r\n\r\n.title-form select {\r\n  font-size: 1rem; \r\n  width: 90%;\r\n  margin-inline: auto;\r\n}\r\n\r\n.title-form option {\r\n  text-transform: capitalize;\r\n}\r\n\r\n\r\n\r\n@media (max-width: 31.25rem) {\r\n  :root {\r\n    --fs-average: 1rem;\r\n  } \r\n  .task-main  {    \r\n    flex-direction: column;  \r\n    gap: 2rem;    \r\n  }   \r\n\r\n  \r\n  \r\n  \r\n  .task-project {     \r\n    top: 30%;\r\n    left: 2.5rem;    \r\n  }\r\n\r\n  .svg-div {\r\n    position: absolute;\r\n    right: 1rem;\r\n    top: 20%;\r\n  }\r\n\r\n  .info {\r\n    margin-left:33px;\r\n  }\r\n  \r\n}\r\n\r\n.remove-project-warning {\r\n  color: white;\r\n  background-color: grey;\r\n  text-align: center;\r\n  text-transform: none;\r\n  padding: 2rem;\r\n}\r\n\r\n.remove-project-warning > * {\r\n  margin-bottom: 1rem;\r\n}\r\n.remove-project-warning h1{\r\n  font-size: 2rem;\r\n  margin-bottom: 1rem;\r\n}\r\n\r\n.remove-project-warning form div, .remove-project-warning form button {\r\n  width: min-content;\r\n  white-space: nowrap;\r\n}\r\n\r\n.remove-project-warning form {\r\n    display: grid;       \r\n   \r\n    column-gap: 1rem;\r\n    grid-template-rows: 1fr 1fr;\r\n    grid-template-areas:\r\n    \"justProject tasks\"\r\n    \"submit cancel\"\r\n    ;\r\n    padding: 5%;\r\n}\r\n\r\n.just-project-div {\r\n  grid-area: justProject;\r\n  justify-self: center;\r\n  \r\n}\r\n\r\n.tasks-div {\r\n  grid-area: tasks;\r\n  justify-self: center;\r\n  \r\n}\r\n\r\n.btn-warning-submit {\r\n  grid-area: submit;  \r\n  margin-inline: 0 !important;\r\n  justify-self: flex-end !important;\r\n  \r\n}\r\n\r\n.btn-warning-cancel{\r\n  justify-self: flex-start;\r\n  grid-area: cancel;  \r\n  \r\n}\r\n\r\n\r\n\r\n.remove-project-warning input[type=radio]{\r\n  background-color: red;\r\n  appearance: auto;\r\n}\r\n\r\n.btn-warning-cancel , .btn-warning-submit{\r\n  padding: 1rem 2rem !important;\r\n  background-color: grey !important;\r\n  border-radius:  50px !important;\r\n  \r\n}\r\n\r\n.btn-warning-cancel:hover , .btn-warning-submit:hover{\r\n  cursor: pointer;\r\n  color: black;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.btn-warning-submit:hover {\r\n  background-color: green !important;   \r\n}\r\n\r\n.btn-warning-cancel:hover {\r\n  background-color: red !important;   \r\n}", "",{"version":3,"sources":["webpack://./src/styles.css"],"names":[],"mappings":"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","sourcesContent":["\r\n/* Remove all the styles of the \"User-Agent-Stylesheet\", except for the 'display' property */\r\n*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {\r\n    all: unset;\r\n    display: revert;\r\n  }\r\n \r\n  /* Preferred box-sizing value */\r\n  *,\r\n  *::before,\r\n  *::after {\r\n    box-sizing: border-box;\r\n  }\r\n  \r\n  /*\r\n    Remove list styles (bullets/numbers)\r\n    in case you use it with normalize.css\r\n  */\r\n  ol, ul {\r\n    list-style: none;\r\n  }\r\n  \r\n  /* For images to not be able to exceed their container */\r\n  img {\r\n    display: block;\r\n    max-width: 100%;\r\n  }\r\n  \r\n  /* Removes spacing between cells in tables */\r\n  table {\r\n    border-collapse: collapse;\r\n  }\r\n  \r\n  /* Revert the 'white-space' property for textarea elements on Safari */\r\n  textarea {\r\n    white-space: revert;\r\n  }\r\n  \r\n  :root {\r\n    --clr-primary:rgb(102, 52, 127);\r\n    --clr-secondary:rgb(158, 71, 132);\r\n    --clr-dark:rgb(55, 48, 107);\r\n    --clr-accent:rgb(210, 118, 133);\r\n\r\n    --clr-low-light: rgb(0, 255, 0, .2);\r\n    --clr-medium-light: rgb(0, 0, 255, .2);\r\n    --clr-high-light: rgb(255, 255, 0, .2);\r\n    --clr-critical-light: rgb(255, 0, 0, .2);\r\n\r\n    --clr-low-strong: rgb(0, 255, 0);\r\n    --clr-medium-strong: rgb(0, 0, 255);\r\n    --clr-high-strong: gold;\r\n    --clr-critical-strong: rgb(255, 0, 0);\r\n\r\n\r\n\r\n\r\n    --fs-average: 1rem;\r\n    --fs-medium: calc(var(--fs-average) * 1.25);\r\n    --fs-big: calc(var(--fs-average) * 1.5rem);\r\n    --fs-large:calc(var(--fs-average) * 2rem); \r\n    \r\n  }\r\n\r\n  .low {\r\n    background-color: var(--clr-low-light);\r\n  }\r\n\r\n  .medium {\r\n    background-color: var(--clr-medium-light);\r\n  }\r\n\r\n  .high {\r\n    background-color: var(--clr-high-light);\r\n  }\r\n\r\n  .critical{\r\n    background-color: var(--clr-critical-light);\r\n  }\r\n\r\n  .critical span {\r\n    color: var(--clr-critical-strong);    \r\n  }\r\n\r\n  .high span {\r\n    color: var(--clr-high-strong);    \r\n  }\r\n\r\n  .medium span {\r\n    color: var(--clr-medium-strong);    \r\n  }\r\n\r\n  .low span {\r\n    color: var(--clr-low-strong);    \r\n  } \r\n\r\n\r\n  .critical .description p  {\r\n      border-bottom:3px solid var(--clr-critical-light);  \r\n      border-inline:3px solid var(--clr-critical-light);\r\n  }\r\n\r\n  \r\n  .high .description p {\r\n    border-bottom:3px solid var(--clr-high-light);  \r\n    border-inline:3px solid var(--clr-high-light);\r\n  }\r\n\r\n  .medium .description p {\r\n    border-bottom:3px solid var(--clr-medium-light);  \r\n    border-inline:3px solid var(--clr-medium-light);\r\n  }\r\n\r\n  .low .description p {\r\n    border-bottom:3px solid var(--clr-low-light);  \r\n    border-inline:3px solid var(--clr-low-light);\r\n  }\r\n\r\n\r\n\r\n\r\n  * {\r\n    font-family: 'Fira Sans', sans-serif;\r\n  }\r\n\r\nmain {\r\n    width: 100%;    \r\n}\r\n\r\n.container  {\r\n    margin-inline: auto; \r\n    width: min(80%, 50rem);\r\n}\r\n\r\n.list {\r\n    \r\n    margin-inline: auto;      \r\n}\r\n\r\n.list-top {\r\n    background-color: var(--clr-dark);\r\n    color: white;\r\n    margin-block: auto;\r\n    \r\n}\r\n\r\n.list-top, .list-middle {\r\n    padding-inline:3%;\r\n}\r\n\r\n.list-middle {\r\n    padding-block: 1rem;\r\n}\r\n\r\n.list-top {\r\n    padding-top: 1rem;\r\n}\r\n\r\n.nav {\r\n    margin-top: 2rem;\r\n    padding-bottom: 1rem;\r\n}\r\n\r\n.nav ul{\r\n    display: flex;\r\n    gap: 1rem;\r\n    text-transform: capitalize;    \r\n}\r\n\r\n\r\n\r\n.nav ul li:hover {\r\n  cursor: pointer;\r\n  border-bottom: 2px solid white;\r\n  /* text-decoration: underline; */\r\n}\r\n\r\n.buttons {\r\n    font-size: var(--fs-medium);\r\n    display: flex;\r\n    justify-content: space-between;\r\n    gap:1rem;\r\n}\r\n\r\n.buttons button {\r\n    background-color: var(--clr-accent);\r\n    padding: .5rem 10%;\r\n    text-transform: uppercase;\r\n}\r\n\r\n\r\n.buttons button:hover {\r\n    transition: all .5s ease;\r\n    cursor: pointer;\r\n    background-color: var(--clr-secondary);\r\n    color: var(--clr-dark);\r\n}\r\n\r\n\r\n.task {  \r\n  margin-block: 1rem; \r\n  position: relative;\r\n}\r\n\r\n.task form {\r\n  padding: .5rem;\r\n}\r\n\r\n.task form > *{\r\n  margin: 3%;\r\n}\r\n\r\n.task option, .task select, .task form {\r\n  text-transform: uppercase;\r\n  color: black;\r\n  width: min-content;  \r\n  text-align: center;  \r\n}\r\n\r\n.task select {\r\n  font-weight: 900;\r\n  font-style: italic;  \r\n}\r\n\r\n.task option {\r\n  font-style: normal;\r\n  font-weight: normal;\r\n}\r\n\r\n\r\n.task input[type=submit] {  \r\n  padding: 0;\r\n  border-radius: 0;\r\n}\r\n\r\n.edit-buttons input {\r\n  margin-right: 5%;\r\n}\r\n\r\n.edit-buttons button {\r\n  margin-inline: auto;\r\n}\r\n\r\n.task input[type=submit], .task button {\r\n  color: black;\r\n  background-color: lightgrey;  \r\n  padding: 2%;\r\n  border-radius: 1rem;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.task input[type=submit]:hover {\r\n  color: white;\r\n  background-color: green;\r\n}\r\n\r\n.task button:hover {\r\n  color: white;\r\n  cursor: pointer;\r\n  background-color: red;\r\n}\r\n\r\n.task form {\r\n  border: 1px solid black;\r\n  background-color: lightgrey; \r\n}\r\n.task form input, .task form  select, .task button {\r\n  opacity: .7;\r\n}\r\n\r\n.task form input:not(input[type=submit]), .task form  select{\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\n.task form > *:not(:nth-child(3)):hover {  \r\n  opacity: 1;\r\n}\r\n\r\n.task form input[type=text] {\r\n  text-transform: none;\r\n  opacity: 1;\r\n  font-style: normal;\r\n}\r\n\r\n.task-main  {\r\n    display: flex;\r\n    flex-direction: row;\r\n    align-content: center;\r\n    justify-content: space-between;    \r\n    font-size:var(--fs-medium);   \r\n    padding: .5rem;\r\n    padding-bottom: 1rem;   \r\n}\r\n\r\n.task-main p{\r\n    display: inline;\r\n}\r\n\r\n.task-main > div {    \r\n    display: flex;    \r\n    align-content: center;\r\n}\r\n\r\n.list-middle {\r\n    background-color: whitesmoke;\r\n}\r\n\r\n.task-main svg:first-child {\r\n    margin-right: .5rem;\r\n}\r\n\r\n\r\n\r\nsvg {\r\n    opacity: .5;\r\n    transition: color .5s ease;\r\n}\r\n\r\nsvg:hover {\r\n    cursor: pointer;\r\n    opacity: 1;    \r\n    transition: color .5s ease;\r\n}\r\n\r\n.tick:hover {\r\n    fill: red;\r\n}\r\n\r\n\r\n.info {    \r\n    font-size: var(--fs-average);  \r\n}\r\n\r\n.info span {\r\n    text-transform: uppercase;\r\n    margin-right: .3rem;\r\n    \r\n}\r\n\r\n.current-slide {\r\n    border-bottom: 2px solid white;\r\n}\r\n\r\n.description {    \r\n    font-size: var(--fs-average);      \r\n    font-style: italic;\r\n    display: none;   \r\n}\r\n\r\n.description p{\r\n  padding: 1rem; \r\n  background-color: white;\r\n  width: 100%;\r\n}\r\n\r\n.description svg {\r\n  position: absolute;\r\n  right: 1%;\r\n  top: 20%;\r\n}\r\n\r\n.new-task-form, .background-color, .new-project-form {  \r\n  position: absolute;  \r\n}\r\n\r\n.background-color {\r\n  \r\n  background-color: black;\r\n  width: 100vw;\r\n  height: calc(100% + 30vh);\r\n  opacity: .7;\r\n}\r\n\r\n\r\n.new-task-form, .background-color, .main-absolute, .new-project-form {\r\n  visibility: hidden;\r\n}\r\n\r\n.nav select:hover {\r\n  color: white;\r\n}\r\n\r\n.new-task-form, .new-project-form, .background-color {\r\n  z-index: 10000;\r\n  \r\n}\r\n\r\n.main-absolute {  \r\n  display: grid;  \r\n  justify-items: center;\r\n  \r\n\r\n}\r\n\r\n\r\nform {   \r\n  color: white;\r\n  display: grid;\r\n  position: relative;\r\n}\r\n\r\nfieldset {  \r\n  background-color: var(--clr-secondary);\r\n  padding: 1rem;\r\n  border-radius: 20px;\r\n  margin:1rem;\r\n  text-align:center;\r\n}\r\n\r\nlegend{\r\n  background-color: var(--clr-accent);\r\n  border-radius: 10px;\r\n  padding:.5rem 1rem;\r\n}\r\n\r\ninput[type=text], textarea {\r\n  border-bottom: 1px solid black;\r\n}\r\n\r\ninput[type=submit]:hover, select:hover,input[type=date]:hover,.close-button:hover {\r\n  color: black;  \r\n  cursor: pointer;\r\n  transition: all .5s ease;\r\n}\r\n\r\n\r\ninput[type=submit],.close-button {\r\n  background-color:var(--clr-secondary);\r\n  margin-inline: auto;\r\n  padding: 1rem 3rem;\r\n  border-radius: 50px;\r\n  transition: background-color .5s ease;\r\n}\r\n\r\ninput[type=submit]:hover,.close-button:hover {\r\n  background-color:var(--clr-dark);  \r\n  transition: background-color .5s ease;\r\n}\r\n\r\noption {\r\n  color: black; \r\n}\r\n\r\n.task-project {\r\n  font-style: italic;\r\n  font-size: var(--fs-average);\r\n  position: absolute;\r\n  bottom:0;\r\n  left: 2.5rem;\r\n  \r\n  opacity: .7;\r\n  bottom: 15%;\r\n}\r\n\r\nlegend {\r\n  position: relative;\r\n}\r\n.optional::after {\r\n  content: \"(optional field)\"; \r\n  display: block;\r\n  font-size: .8em;\r\n  font-style: italic;\r\n}\r\n\r\n.svg-div {\r\n  display: flex;\r\n  flex-direction: column;\r\n  margin-left: 1rem;  \r\n}\r\n\r\n.project {\r\n  margin-block:1rem;\r\n  border-bottom:3px solid var(--clr-accent);  \r\n  border-inline:3px solid var(--clr-accent);\r\n}\r\n\r\n\r\n.project-top {\r\n  display: flex;\r\n  justify-content: space-between; \r\n  padding: 1rem; \r\n  font-size: 1.5rem;\r\n  font-style: italic;\r\n  font-weight: bold;\r\n  background-color: var(--clr-accent);\r\n}\r\n\r\n\r\n\r\n.project-hidden {\r\n  display: none;\r\n  background-color: white;\r\n  padding-inline: 1rem;\r\n}\r\n\r\n.project-hidden  .task-project {\r\n  visibility: hidden !important;\r\n}\r\n\r\n\r\n.btn-description-redo, .btn-description-clear {\r\n  position: absolute;\r\n  border-bottom: none !important;  \r\n}\r\n\r\n.btn-description-redo {\r\n  left: 75%;  \r\n  \r\n}\r\n.description-form textarea{\r\n  border-bottom: none;\r\n}\r\n\r\n.description-form textarea {\r\n  width: 14.5rem;\r\n  padding-right:4rem; \r\n  word-wrap:break-word ;\r\n  text-wrap:unrestricted; \r\n}\r\n\r\n.title-form input, .description-form textarea, .title-form select  {\r\n    text-align: left; \r\n    text-transform: none;\r\n    font-style: normal;   \r\n}\r\n\r\n.title-form select {\r\n  font-size: 1rem; \r\n  width: 90%;\r\n  margin-inline: auto;\r\n}\r\n\r\n.title-form option {\r\n  text-transform: capitalize;\r\n}\r\n\r\n\r\n\r\n@media (max-width: 31.25rem) {\r\n  :root {\r\n    --fs-average: 1rem;\r\n  } \r\n  .task-main  {    \r\n    flex-direction: column;  \r\n    gap: 2rem;    \r\n  }   \r\n\r\n  \r\n  \r\n  \r\n  .task-project {     \r\n    top: 30%;\r\n    left: 2.5rem;    \r\n  }\r\n\r\n  .svg-div {\r\n    position: absolute;\r\n    right: 1rem;\r\n    top: 20%;\r\n  }\r\n\r\n  .info {\r\n    margin-left:33px;\r\n  }\r\n  \r\n}\r\n\r\n.remove-project-warning {\r\n  color: white;\r\n  background-color: grey;\r\n  text-align: center;\r\n  text-transform: none;\r\n  padding: 2rem;\r\n}\r\n\r\n.remove-project-warning > * {\r\n  margin-bottom: 1rem;\r\n}\r\n.remove-project-warning h1{\r\n  font-size: 2rem;\r\n  margin-bottom: 1rem;\r\n}\r\n\r\n.remove-project-warning form div, .remove-project-warning form button {\r\n  width: min-content;\r\n  white-space: nowrap;\r\n}\r\n\r\n.remove-project-warning form {\r\n    display: grid;       \r\n   \r\n    column-gap: 1rem;\r\n    grid-template-rows: 1fr 1fr;\r\n    grid-template-areas:\r\n    \"justProject tasks\"\r\n    \"submit cancel\"\r\n    ;\r\n    padding: 5%;\r\n}\r\n\r\n.just-project-div {\r\n  grid-area: justProject;\r\n  justify-self: center;\r\n  \r\n}\r\n\r\n.tasks-div {\r\n  grid-area: tasks;\r\n  justify-self: center;\r\n  \r\n}\r\n\r\n.btn-warning-submit {\r\n  grid-area: submit;  \r\n  margin-inline: 0 !important;\r\n  justify-self: flex-end !important;\r\n  \r\n}\r\n\r\n.btn-warning-cancel{\r\n  justify-self: flex-start;\r\n  grid-area: cancel;  \r\n  \r\n}\r\n\r\n\r\n\r\n.remove-project-warning input[type=radio]{\r\n  background-color: red;\r\n  appearance: auto;\r\n}\r\n\r\n.btn-warning-cancel , .btn-warning-submit{\r\n  padding: 1rem 2rem !important;\r\n  background-color: grey !important;\r\n  border-radius:  50px !important;\r\n  \r\n}\r\n\r\n.btn-warning-cancel:hover , .btn-warning-submit:hover{\r\n  cursor: pointer;\r\n  color: black;\r\n  transition: all .5s ease;\r\n}\r\n\r\n.btn-warning-submit:hover {\r\n  background-color: green !important;   \r\n}\r\n\r\n.btn-warning-cancel:hover {\r\n  background-color: red !important;   \r\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1406,9 +1727,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _task_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./task.js */ "./src/task.js");
 /* harmony import */ var _project_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./project.js */ "./src/project.js");
 /* harmony import */ var _validation_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./validation.js */ "./src/validation.js");
+/* harmony import */ var _message_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./message.js */ "./src/message.js");
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 
@@ -1437,6 +1760,14 @@ window.acceptChanges = _accept_js__WEBPACK_IMPORTED_MODULE_6__["default"];
 window.showProjectTasks = _project_js__WEBPACK_IMPORTED_MODULE_9__.showProjectTasks;
 window.selectProject = _selectProject_js__WEBPACK_IMPORTED_MODULE_7__["default"];
 window.hideMenu = _dom_js__WEBPACK_IMPORTED_MODULE_3__.hideMenu;
+window.clearDescription = _change_js__WEBPACK_IMPORTED_MODULE_5__.clearDescription;
+window.redoDescription = _change_js__WEBPACK_IMPORTED_MODULE_5__.redoDescription;
+window.removeProject = _project_js__WEBPACK_IMPORTED_MODULE_9__.removeProject;
+window.acceptDelete = _project_js__WEBPACK_IMPORTED_MODULE_9__.acceptDelete;
+window.cancelDelete = _project_js__WEBPACK_IMPORTED_MODULE_9__.cancelDelete;
+window.message = _message_js__WEBPACK_IMPORTED_MODULE_11__.message;
+window.message2 = _message_js__WEBPACK_IMPORTED_MODULE_11__.message2;
+window.message3 = _message_js__WEBPACK_IMPORTED_MODULE_11__.message3;
 var nav = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("nav");
 var slideUl = document.getElementById("slide-ul").children;
 var dropdownLi = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getById)("dropdown-li");
@@ -1505,15 +1836,6 @@ var newTaskForm = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("new-t
 var newProjectForm = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("new-project-form");
 
 //Message when task doesn't have a description
-function message() {
-  alert("Sorry no description for that task :(");
-}
-;
-window.message = message;
-function message2() {
-  alert("That's an empy project!");
-}
-window.message2 = message2;
 
 //Shows new task form
 newTaskBtn.addEventListener("click", function () {
@@ -1552,4 +1874,4 @@ var formSelect = (0,_getters_js__WEBPACK_IMPORTED_MODULE_2__.getByClass)("select
 
 /******/ })()
 ;
-//# sourceMappingURL=bundlee54552332fca99cc75ac.js.map
+//# sourceMappingURL=bundlecb71b3f241f79e1ab486.js.map
